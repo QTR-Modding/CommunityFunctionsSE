@@ -56,7 +56,7 @@ namespace CommunityFunctionsSE {
         }
 
         [[nodiscard]] static std::optional<ConditionFunction> Create(
-            const Registration& a_entry, const Comparison a_comparison, const double a_comparisonValue,
+            const RegistrationV1& a_entry, const Comparison a_comparison, const double a_comparisonValue,
             const std::span<const ConditionArgument> a_arguments) {
             const auto function = a_entry.function;
             if (!function || !function->conditionFunction || function->numParams > 2 ||

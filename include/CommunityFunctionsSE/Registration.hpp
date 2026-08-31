@@ -23,7 +23,7 @@ namespace CommunityFunctionsSE {
         return std::bit_cast<float>(static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(a_parameter)));
     }
 
-    struct Registration {
+    struct RegistrationV1 {
         std::uint32_t id;
         const RE::SCRIPT_FUNCTION* function;
         std::array<ConditionParameter, 2> conditionParameters{};
@@ -31,7 +31,7 @@ namespace CommunityFunctionsSE {
 
     namespace detail {
         template <std::size_t N>
-        [[nodiscard]] consteval bool IsValid(const std::array<Registration, N>& a_entries) noexcept {
+        [[nodiscard]] consteval bool IsValid(const std::array<RegistrationV1, N>& a_entries) noexcept {
             std::array<bool, kFunctionLimit - kFunctionBase> usedIDs{};
 
             for (const auto& entry : a_entries) {
@@ -54,7 +54,7 @@ namespace CommunityFunctionsSE {
         }
 
         template <std::size_t N>
-        [[nodiscard]] consteval std::size_t GetLookupSize(const std::array<Registration, N>& a_entries) noexcept {
+        [[nodiscard]] consteval std::size_t GetLookupSize(const std::array<RegistrationV1, N>& a_entries) noexcept {
             std::size_t size = 0;
 
             for (const auto& entry : a_entries) {
@@ -70,8 +70,8 @@ namespace CommunityFunctionsSE {
         }
 
         template <std::size_t Size, std::size_t N>
-        [[nodiscard]] consteval auto BuildRegistry(const std::array<Registration, N>& a_entries) noexcept {
-            std::array<Registration, Size> result{};
+        [[nodiscard]] consteval auto BuildRegistry(const std::array<RegistrationV1, N>& a_entries) noexcept {
+            std::array<RegistrationV1, Size> result{};
 
             for (const auto& entry : a_entries) {
                 if (entry.id >= kFunctionBase) {

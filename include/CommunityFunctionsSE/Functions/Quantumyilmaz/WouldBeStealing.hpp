@@ -27,7 +27,7 @@ namespace CommunityFunctionsSE::WouldBeStealing {
         .conditionFunction = Evaluate
     };
 
-    inline constexpr Registration registration{
+    inline constexpr RegistrationV1 registration{
         .id = kID,
         .function = &function,
         .conditionParameters = { ConditionParameter::kTarget }

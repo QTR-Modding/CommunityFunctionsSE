@@ -62,12 +62,12 @@ After an ID is merged, it remains assigned to that function. Compatible fixes ma
 
 1. Choose an unused ID from `1000` through `9999`.
 2. Add the implementation under `include/CommunityFunctionsSE/Functions/`. Author or team subfolders are allowed.
-3. Export a `Registration`:
+3. Export a `RegistrationV1`:
 
 ```cpp
 inline constexpr std::uint32_t kID = 1234;
 
-inline constexpr CommunityFunctionsSE::Registration registration{
+inline constexpr CommunityFunctionsSE::RegistrationV1 registration{
     .id = kID,
     .function = &function,
     .conditionParameters = { CommunityFunctionsSE::ConditionParameter::kTarget }
