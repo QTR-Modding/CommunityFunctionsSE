@@ -6,19 +6,47 @@ namespace CommunityFunctionsSE {
     inline constexpr std::uint32_t kFunctionBase = 1000;
     inline constexpr std::uint32_t kFunctionLimit = 10000;
 
+    enum class ConditionParameter : std::uint8_t {
+        kNone,
+        kTarget,
+        kForm,
+        kReference,
+        kInteger,
+        kFloat
+    };
+
+    [[nodiscard]] inline std::int32_t DecodeIntegerParameter(void* a_parameter) noexcept {
+        return static_cast<std::int32_t>(reinterpret_cast<std::intptr_t>(a_parameter));
+    }
+
+    [[nodiscard]] inline float DecodeFloatParameter(void* a_parameter) noexcept {
+        return std::bit_cast<float>(static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(a_parameter)));
+    }
+
     struct RegistrationV1 {
         std::uint32_t id;
         const RE::SCRIPT_FUNCTION* function;
+    };
+
+    struct RegistrationV2 {
+        std::uint32_t id;
+        const RE::SCRIPT_FUNCTION* function;
+        std::array<ConditionParameter, 2> conditionParameters{};
     };
 
     namespace detail {
         struct Entry {
             std::uint32_t id;
             const RE::SCRIPT_FUNCTION* function;
+            std::array<ConditionParameter, 2> conditionParameters{};
         };
 
         [[nodiscard]] consteval Entry Normalize(const RegistrationV1& a_registration) noexcept {
             return { a_registration.id, a_registration.function };
+        }
+
+        [[nodiscard]] consteval Entry Normalize(const RegistrationV2& a_registration) noexcept {
+            return { a_registration.id, a_registration.function, a_registration.conditionParameters };
         }
 
         template <std::size_t N>
@@ -27,6 +55,10 @@ namespace CommunityFunctionsSE {
 
             for (const auto& entry : a_entries) {
                 if (entry.id < kFunctionBase || entry.id >= kFunctionLimit || !entry.function) {
+                    return false;
+                }
+                if (entry.conditionParameters[0] == ConditionParameter::kNone &&
+                    entry.conditionParameters[1] != ConditionParameter::kNone) {
                     return false;
                 }
 
@@ -58,18 +90,18 @@ namespace CommunityFunctionsSE {
 
         template <std::size_t Size, std::size_t N>
         [[nodiscard]] consteval auto BuildRegistry(const std::array<Entry, N>& a_entries) noexcept {
-            std::array<const RE::SCRIPT_FUNCTION*, Size> functions{};
+            std::array<Entry, Size> result{};
 
             for (const auto& entry : a_entries) {
                 if (entry.id >= kFunctionBase) {
                     const auto index = entry.id - kFunctionBase;
                     if (index < Size) {
-                        functions[index] = entry.function;
+                        result[index] = entry;
                     }
                 }
             }
 
-            return functions;
+            return result;
         }
     }
 }
