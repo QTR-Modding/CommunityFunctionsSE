@@ -15,7 +15,7 @@ Add to your `vcpkg.json`:
 In your `CMakeLists.txt`:
 
 ```cmake
-find_path(COMMUNITY_FUNCTIONS_SE_INCLUDE_DIRS "CommunityFunctionsSE/Functions.hpp")
+find_path(COMMUNITY_FUNCTIONS_SE_INCLUDE_DIRS "CommunityFunctionsSE/API.hpp")
 target_include_directories(your_target PRIVATE ${COMMUNITY_FUNCTIONS_SE_INCLUDE_DIRS})
 ```
 
@@ -25,7 +25,7 @@ To use the port locally, copy `cmake/ports/community-functions-se` into your pro
 
 ## Usage
 
-Include `CommunityFunctionsSE/Functions.hpp` and call `CommunityFunctionsSE::GetFunction(id)`.
+Include `CommunityFunctionsSE/API.hpp` and call `CommunityFunctionsSE::GetFunction(id)`.
 It returns a pointer to the matching `RE::SCRIPT_FUNCTION`, or `nullptr` when the ID is not registered.
 
 ## Functions
@@ -54,4 +54,4 @@ inline constexpr CommunityFunctionsSE::RegistrationV1 registration{
 
 4. In `Functions.hpp`, include the new header and add `Normalize(MyFunction::registration)` to `entries`.
 5. Add the function, author, and pull-request link to the table above.
-6. Compile the umbrella header with CommonLibVR-MIT. Test a meaningful result and every implemented failure path in Skyrim, then include those results in the pull request.
+6. Compile `API.hpp` with CommonLibVR-MIT. Test a meaningful result and every implemented failure path in Skyrim, then include those results in the pull request.
