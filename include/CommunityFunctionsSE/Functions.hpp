@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CommunityFunctionsSE/Registration.hpp"
-#include "CommunityFunctionsSE/Functions/WouldBeStealing.hpp"
+#include "CommunityFunctionsSE/Functions/Quantumyilmaz/WouldBeStealing.hpp"
 
 namespace CommunityFunctionsSE {
     namespace detail {
