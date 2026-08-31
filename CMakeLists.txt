@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(CommunityFunctionsSE VERSION 0.1.0 LANGUAGES CXX)
+project(CommunityFunctionsSE VERSION 0.2.0 LANGUAGES CXX)
 
 include(cmake/headerlist.cmake)
 include(GNUInstallDirs)
