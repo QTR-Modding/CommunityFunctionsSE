@@ -29,3 +29,4 @@ Community function IDs start at `1000`.
 
 | ID | Function | Input | Author | PR |
 |---:|---|---|---|---|
+| 1000 | `WouldBeStealing` | Subject: Actor; Target: object reference | [@Quantumyilmaz](https://github.com/Quantumyilmaz) | [#1](https://github.com/QTR-Modding/CommunityFunctionsSE/pull/1) |
