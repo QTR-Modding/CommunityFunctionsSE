@@ -62,12 +62,12 @@ After an ID is merged, it remains assigned to that function. Compatible fixes ma
 
 1. Choose an unused ID from `1000` through `9999`.
 2. Add the implementation under `include/CommunityFunctionsSE/Functions/`. Author or team subfolders are allowed.
-3. Export a `RegistrationV2`:
+3. Export a `Registration`:
 
 ```cpp
 inline constexpr std::uint32_t kID = 1234;
 
-inline constexpr CommunityFunctionsSE::RegistrationV2 registration{
+inline constexpr CommunityFunctionsSE::Registration registration{
     .id = kID,
     .function = &function,
     .conditionParameters = { CommunityFunctionsSE::ConditionParameter::kTarget }
@@ -86,6 +86,6 @@ Each callback parameter needs one matching binding:
 
 Use `DecodeIntegerParameter` and `DecodeFloatParameter` inside callbacks. Explicit references are retained with an engine handle.
 
-4. Include the header in `Functions.hpp` and add `Normalize(MyFunction::registration)` to `entries`.
+4. Include the header in `Functions.hpp` and add `MyFunction::registration` to `entries`.
 5. Add the function, author, and pull-request link to the table above.
 6. Compile `API.hpp` with CommonLibVR-MIT. Test a meaningful result and every failure path in Skyrim, then include the results in the pull request.

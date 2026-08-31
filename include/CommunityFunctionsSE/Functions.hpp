@@ -6,14 +6,14 @@
 namespace CommunityFunctionsSE {
     namespace detail {
         inline constexpr std::array entries{
-            Normalize(WouldBeStealing::registration)
+            WouldBeStealing::registration
         };
 
         static_assert(IsValid(entries), "Invalid community function registration");
 
         inline constexpr auto registry = BuildRegistry<GetLookupSize(entries)>(entries);
 
-        [[nodiscard]] constexpr const Entry* GetEntry(const std::uint32_t a_id) noexcept {
+        [[nodiscard]] constexpr const Registration* GetEntry(const std::uint32_t a_id) noexcept {
             if (a_id < kFunctionBase) {
                 return nullptr;
             }
