@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CommunityFunctionsSE/Parameters.hpp"
 #include "CommunityFunctionsSE/ConditionFunction.hpp"
 #include "CommunityFunctionsSE/Functions.hpp"
 

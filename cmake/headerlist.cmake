@@ -3,5 +3,6 @@ set(headers
     include/CommunityFunctionsSE/ConditionFunction.hpp
     include/CommunityFunctionsSE/Functions.hpp
     include/CommunityFunctionsSE/Functions/Quantumyilmaz/WouldBeStealing.hpp
+    include/CommunityFunctionsSE/Parameters.hpp
     include/CommunityFunctionsSE/Registration.hpp
 )
