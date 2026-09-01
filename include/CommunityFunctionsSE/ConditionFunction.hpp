@@ -27,8 +27,10 @@ namespace CommunityFunctionsSE {
                         return false;
                     }
                     parameters[i] = references[i].get();
-                } else if (const auto encoded = std::get_if<std::uintptr_t>(std::addressof(slot))) {
-                    parameters[i] = reinterpret_cast<void*>(*encoded);
+                } else if (const auto integer = std::get_if<std::int32_t>(std::addressof(slot))) {
+                    parameters[i] = EncodeParameter(*integer);
+                } else if (const auto number = std::get_if<float>(std::addressof(slot))) {
+                    parameters[i] = EncodeParameter(*number);
                 }
             }
 
@@ -104,7 +106,7 @@ namespace CommunityFunctionsSE {
 
     private:
         struct Target {};
-        using Slot = std::variant<std::monostate, Target, RE::TESForm*, RE::ObjectRefHandle, std::uintptr_t>;
+        using Slot = std::variant<std::monostate, Target, RE::TESForm*, RE::ObjectRefHandle, std::int32_t, float>;
 
         ConditionFunction(RE::SCRIPT_FUNCTION::Condition_t* a_callback, const Comparison a_comparison,
                           const double a_comparisonValue) :
@@ -157,7 +159,7 @@ namespace CommunityFunctionsSE {
                 if (!number) {
                     return false;
                 }
-                a_slot = static_cast<std::uintptr_t>(static_cast<std::intptr_t>(*number));
+                a_slot = *number;
                 return true;
             }
             if (a_binding == ConditionParameter::kFloat) {
@@ -165,7 +167,7 @@ namespace CommunityFunctionsSE {
                 if (!number || !std::isfinite(*number)) {
                     return false;
                 }
-                a_slot = static_cast<std::uintptr_t>(std::bit_cast<std::uint32_t>(*number));
+                a_slot = *number;
                 return true;
             }
             return false;
