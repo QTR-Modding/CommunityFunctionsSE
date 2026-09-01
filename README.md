@@ -26,9 +26,9 @@ To use the port locally, copy `cmake/ports/community-functions-se` into your pro
 ## Use a function
 
 Include `CommunityFunctionsSE/API.hpp` and call `CommunityFunctionsSE::GetFunction(id)`.
-It returns the matching `RE::SCRIPT_FUNCTION` only when its registration is callable; otherwise `nullptr`.
+It returns a pointer to the matching `RE::SCRIPT_FUNCTION`, or `nullptr` if the ID is not registered.
 
-`GetConditionParameters(id)` returns the same function's two parameter bindings, or `std::nullopt`.
+`GetConditionParameters(id)` returns the function's two parameter bindings, or `std::nullopt` if the ID is not registered.
 Use `EncodeParameter(value)` to pass an integer or float to a callback.
 
 ## Use a condition

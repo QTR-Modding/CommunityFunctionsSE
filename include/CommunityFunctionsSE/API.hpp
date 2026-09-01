@@ -1,25 +1,27 @@
 #pragma once
 
-#include "CommunityFunctionsSE/Parameters.hpp"
+#include <cstdint>
 
 namespace CommunityFunctionsSE {
-    // Callers encode numeric parameters; condition callbacks decode them.
-    using Parameters::ConditionParameter;
-    using Parameters::EncodeParameter;
-    using Parameters::DecodeIntegerParameter;
-    using Parameters::DecodeFloatParameter;
+    enum class ConditionParameter : std::uint8_t;  // kNone, kTarget, kForm, kReference, kInteger, kFloat
+
+    [[nodiscard]] inline void* EncodeParameter(std::int32_t a_value) noexcept;
+    [[nodiscard]] inline void* EncodeParameter(float a_value) noexcept;
+    [[nodiscard]] inline std::int32_t DecodeIntegerParameter(void* a_parameter) noexcept;
+    [[nodiscard]] inline float DecodeFloatParameter(void* a_parameter) noexcept;
 }
 
+#include "CommunityFunctionsSE/Parameters.hpp"
 #include "CommunityFunctionsSE/ConditionFunction.hpp"
 #include "CommunityFunctionsSE/Functions.hpp"
 
 namespace CommunityFunctionsSE {
-    [[nodiscard]] inline const RE::SCRIPT_FUNCTION* GetFunction(const std::uint32_t a_id) noexcept {
+    [[nodiscard]] constexpr const RE::SCRIPT_FUNCTION* GetFunction(const std::uint32_t a_id) noexcept {
         const auto entry = detail::GetEntry(a_id);
         return entry ? entry->function : nullptr;
     }
 
-    [[nodiscard]] inline std::optional<std::array<ConditionParameter, 2>> GetConditionParameters(
+    [[nodiscard]] constexpr std::optional<std::array<ConditionParameter, 2>> GetConditionParameters(
         const std::uint32_t a_id) noexcept {
         if (const auto entry = detail::GetEntry(a_id)) {
             return entry->conditionParameters;

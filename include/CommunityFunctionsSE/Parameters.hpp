@@ -3,7 +3,7 @@
 #include <bit>
 #include <cstdint>
 
-namespace CommunityFunctionsSE::Parameters {
+namespace CommunityFunctionsSE {
     enum class ConditionParameter : std::uint8_t {
         kNone,
         kTarget,

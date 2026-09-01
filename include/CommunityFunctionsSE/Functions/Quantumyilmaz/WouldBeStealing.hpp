@@ -30,6 +30,6 @@ namespace CommunityFunctionsSE::WouldBeStealing {
     inline constexpr RegistrationV1 registration{
         .id = kID,
         .function = &function,
-        .conditionParameters = { Parameters::ConditionParameter::kTarget }
+        .conditionParameters = { ConditionParameter::kTarget }
     };
 }
