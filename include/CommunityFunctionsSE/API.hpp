@@ -9,19 +9,12 @@ namespace CommunityFunctionsSE {
         return entry ? entry->function : nullptr;
     }
 
-    [[nodiscard]] inline std::optional<FunctionCall> GetFunctionCall(
-        const std::uint32_t a_id, const std::span<const FunctionArgument> a_arguments) {
-        const auto entry = detail::GetEntry(a_id);
-        return entry ? FunctionCall::Create(*entry, a_arguments) : std::nullopt;
-    }
-
-    template <class... Args>
-    [[nodiscard]] std::optional<FunctionCall> GetFunctionCall(const std::uint32_t a_id, Args&&... a_arguments) {
-        static_assert(sizeof...(Args) <= 2, "A condition function accepts at most two arguments");
-        const std::array<FunctionArgument, sizeof...(Args)> arguments{
-            FunctionArgument(std::forward<Args>(a_arguments))...
-        };
-        return GetFunctionCall(a_id, std::span<const FunctionArgument>{ arguments });
+    [[nodiscard]] constexpr std::optional<std::array<ConditionParameter, 2>> GetConditionParameters(
+        const std::uint32_t a_id) noexcept {
+        if (const auto entry = detail::GetEntry(a_id)) {
+            return entry->conditionParameters;
+        }
+        return std::nullopt;
     }
 
     [[nodiscard]] inline std::optional<ConditionFunction> GetConditionFunction(

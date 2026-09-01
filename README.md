@@ -28,19 +28,8 @@ To use the port locally, copy `cmake/ports/community-functions-se` into your pro
 Include `CommunityFunctionsSE/API.hpp` and call `CommunityFunctionsSE::GetFunction(id)`.
 It returns a pointer to the matching `RE::SCRIPT_FUNCTION`, or `nullptr` if the ID is not registered.
 
-To compile its arguments and read its numeric result:
-
-```cpp
-const auto call = CommunityFunctionsSE::GetFunctionCall(functionID, 2.5);
-double result;
-
-if (call && call->Evaluate(subject, target, result)) {
-    // Use result.
-}
-```
-
-Arguments are numbers or Form pointers. Numbers are converted according to the function registration.
-`Target` parameters come from `Evaluate(subject, target, result)` and are not passed again.
+`GetConditionParameters(id)` returns the function's two parameter bindings, or `std::nullopt` if the ID is not registered.
+Use `EncodeParameter(value)` to pass an integer or float to a callback.
 
 ## Use a condition
 
