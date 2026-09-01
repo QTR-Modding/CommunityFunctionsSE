@@ -10,10 +10,47 @@ namespace CommunityFunctionsSE {
     struct RegistrationV1 {
         std::uint32_t id;
         const RE::SCRIPT_FUNCTION* function;
-        std::array<ConditionParameter, 2> conditionParameters{};
+        std::array<Parameters::ConditionParameter, 2> conditionParameters{};
     };
 
     namespace detail {
+        [[nodiscard]] constexpr bool Matches(const Parameters::ConditionParameter a_binding,
+                                             const RE::SCRIPT_PARAM_TYPE a_type) noexcept {
+            switch (a_binding) {
+                case Parameters::ConditionParameter::kTarget:
+                case Parameters::ConditionParameter::kReference:
+                    return a_type == RE::SCRIPT_PARAM_TYPE::kObjectRef;
+                case Parameters::ConditionParameter::kForm:
+                    return a_type == RE::SCRIPT_PARAM_TYPE::kForm;
+                case Parameters::ConditionParameter::kInteger:
+                    return a_type == RE::SCRIPT_PARAM_TYPE::kInt;
+                case Parameters::ConditionParameter::kFloat:
+                    return a_type == RE::SCRIPT_PARAM_TYPE::kFloat;
+                default:
+                    return false;
+            }
+        }
+
+        [[nodiscard]] inline bool IsCallable(const RegistrationV1& a_entry) noexcept {
+            const auto function = a_entry.function;
+            if (!function || !function->conditionFunction || function->numParams > a_entry.conditionParameters.size() ||
+                (function->numParams != 0 && !function->params)) {
+                return false;
+            }
+
+            for (std::size_t i = 0; i < a_entry.conditionParameters.size(); ++i) {
+                const auto binding = a_entry.conditionParameters[i];
+                if (i >= function->numParams) {
+                    if (binding != Parameters::ConditionParameter::kNone) {
+                        return false;
+                    }
+                } else if (!Matches(binding, function->params[i].paramType.get())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         template <std::size_t N>
         [[nodiscard]] consteval bool IsValid(const std::array<RegistrationV1, N>& a_entries) noexcept {
             std::array<bool, kFunctionLimit - kFunctionBase> usedIDs{};
@@ -22,8 +59,8 @@ namespace CommunityFunctionsSE {
                 if (entry.id < kFunctionBase || entry.id >= kFunctionLimit || !entry.function) {
                     return false;
                 }
-                if (entry.conditionParameters[0] == ConditionParameter::kNone &&
-                    entry.conditionParameters[1] != ConditionParameter::kNone) {
+                if (entry.conditionParameters[0] == Parameters::ConditionParameter::kNone &&
+                    entry.conditionParameters[1] != Parameters::ConditionParameter::kNone) {
                     return false;
                 }
 

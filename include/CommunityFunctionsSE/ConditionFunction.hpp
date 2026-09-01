@@ -28,9 +28,9 @@ namespace CommunityFunctionsSE {
                     }
                     parameters[i] = references[i].get();
                 } else if (const auto integer = std::get_if<std::int32_t>(std::addressof(slot))) {
-                    parameters[i] = EncodeParameter(*integer);
+                    parameters[i] = Parameters::EncodeParameter(*integer);
                 } else if (const auto number = std::get_if<float>(std::addressof(slot))) {
-                    parameters[i] = EncodeParameter(*number);
+                    parameters[i] = Parameters::EncodeParameter(*number);
                 }
             }
 
@@ -60,12 +60,10 @@ namespace CommunityFunctionsSE {
         [[nodiscard]] static std::optional<ConditionFunction> Create(
             const RegistrationV1& a_entry, const Comparison a_comparison, const double a_comparisonValue,
             const std::span<const ConditionArgument> a_arguments) {
-            const auto function = a_entry.function;
-            if (!function || !function->conditionFunction || function->numParams > 2 ||
-                (function->numParams != 0 && !function->params) || !std::isfinite(a_comparisonValue) ||
-                !IsValid(a_comparison)) {
+            if (!detail::IsCallable(a_entry) || !std::isfinite(a_comparisonValue) || !IsValid(a_comparison)) {
                 return std::nullopt;
             }
+            const auto function = a_entry.function;
 
             ConditionFunction result{ function->conditionFunction, a_comparison, a_comparisonValue };
             std::size_t argumentIndex = 0;
@@ -73,17 +71,10 @@ namespace CommunityFunctionsSE {
             for (std::size_t i = 0; i < result.slots.size(); ++i) {
                 const auto binding = a_entry.conditionParameters[i];
                 if (i >= function->numParams) {
-                    if (binding != ConditionParameter::kNone) {
-                        return std::nullopt;
-                    }
                     continue;
                 }
-                if (!Matches(binding, function->params[i].paramType.get())) {
-                    return std::nullopt;
-                }
-
                 result.required[i] = !function->params[i].optional;
-                if (binding == ConditionParameter::kTarget) {
+                if (binding == Parameters::ConditionParameter::kTarget) {
                     result.slots[i] = Target{};
                     continue;
                 }
@@ -116,26 +107,11 @@ namespace CommunityFunctionsSE {
             return a_comparison >= Comparison::kEqualTo && a_comparison <= Comparison::kLessThanOrEqualTo;
         }
 
-        [[nodiscard]] static bool Matches(const ConditionParameter a_binding,
-                                          const RE::SCRIPT_PARAM_TYPE a_type) noexcept {
-            switch (a_binding) {
-                case ConditionParameter::kTarget:
-                case ConditionParameter::kReference:
-                    return a_type == RE::SCRIPT_PARAM_TYPE::kObjectRef;
-                case ConditionParameter::kForm:
-                    return a_type == RE::SCRIPT_PARAM_TYPE::kForm;
-                case ConditionParameter::kInteger:
-                    return a_type == RE::SCRIPT_PARAM_TYPE::kInt;
-                case ConditionParameter::kFloat:
-                    return a_type == RE::SCRIPT_PARAM_TYPE::kFloat;
-                default:
-                    return false;
-            }
-        }
-
-        [[nodiscard]] static bool Bind(const ConditionParameter a_binding, const ConditionArgument& a_argument,
+        [[nodiscard]] static bool Bind(const Parameters::ConditionParameter a_binding,
+                                       const ConditionArgument& a_argument,
                                        const bool a_required, Slot& a_slot) {
-            if (a_binding == ConditionParameter::kForm || a_binding == ConditionParameter::kReference) {
+            if (a_binding == Parameters::ConditionParameter::kForm ||
+                a_binding == Parameters::ConditionParameter::kReference) {
                 const auto form = std::get_if<RE::TESForm*>(std::addressof(a_argument));
                 if (!form || (!*form && a_required)) {
                     return false;
@@ -147,14 +123,14 @@ namespace CommunityFunctionsSE {
                     a_slot = RE::ObjectRefHandle(reference);
                     return true;
                 }
-                if (a_binding == ConditionParameter::kReference) {
+                if (a_binding == Parameters::ConditionParameter::kReference) {
                     return false;
                 }
                 a_slot = *form;
                 return true;
             }
 
-            if (a_binding == ConditionParameter::kInteger) {
+            if (a_binding == Parameters::ConditionParameter::kInteger) {
                 const auto number = std::get_if<std::int32_t>(std::addressof(a_argument));
                 if (!number) {
                     return false;
@@ -162,7 +138,7 @@ namespace CommunityFunctionsSE {
                 a_slot = *number;
                 return true;
             }
-            if (a_binding == ConditionParameter::kFloat) {
+            if (a_binding == Parameters::ConditionParameter::kFloat) {
                 const auto number = std::get_if<float>(std::addressof(a_argument));
                 if (!number || !std::isfinite(*number)) {
                     return false;

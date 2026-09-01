@@ -1,16 +1,25 @@
 #pragma once
 
 #include "CommunityFunctionsSE/Parameters.hpp"
+
+namespace CommunityFunctionsSE {
+    // Callers encode numeric parameters; condition callbacks decode them.
+    using Parameters::ConditionParameter;
+    using Parameters::EncodeParameter;
+    using Parameters::DecodeIntegerParameter;
+    using Parameters::DecodeFloatParameter;
+}
+
 #include "CommunityFunctionsSE/ConditionFunction.hpp"
 #include "CommunityFunctionsSE/Functions.hpp"
 
 namespace CommunityFunctionsSE {
-    [[nodiscard]] constexpr const RE::SCRIPT_FUNCTION* GetFunction(const std::uint32_t a_id) noexcept {
+    [[nodiscard]] inline const RE::SCRIPT_FUNCTION* GetFunction(const std::uint32_t a_id) noexcept {
         const auto entry = detail::GetEntry(a_id);
         return entry ? entry->function : nullptr;
     }
 
-    [[nodiscard]] constexpr std::optional<std::array<ConditionParameter, 2>> GetConditionParameters(
+    [[nodiscard]] inline std::optional<std::array<ConditionParameter, 2>> GetConditionParameters(
         const std::uint32_t a_id) noexcept {
         if (const auto entry = detail::GetEntry(a_id)) {
             return entry->conditionParameters;

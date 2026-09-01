@@ -13,13 +13,18 @@ namespace CommunityFunctionsSE {
 
         inline constexpr auto registry = BuildRegistry<GetLookupSize(entries)>(entries);
 
-        [[nodiscard]] constexpr const RegistrationV1* GetEntry(const std::uint32_t a_id) noexcept {
+        [[nodiscard]] inline const RegistrationV1* GetEntry(const std::uint32_t a_id) noexcept {
             if (a_id < kFunctionBase) {
                 return nullptr;
             }
 
             const auto index = a_id - kFunctionBase;
-            return index < registry.size() && registry[index].function ? std::addressof(registry[index]) : nullptr;
+            if (index >= registry.size()) {
+                return nullptr;
+            }
+
+            const auto entry = std::addressof(registry[index]);
+            return IsCallable(*entry) ? entry : nullptr;
         }
     }
 }
