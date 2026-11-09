@@ -91,4 +91,4 @@ Use `DecodeIntegerParameter` and `DecodeFloatParameter` inside callbacks. Explic
 
 4. Include the header in `Functions.hpp` and add `MyFunction::registration` to `entries`.
 5. Add the function, author, and pull-request link to the table above.
-6. Compile `API.hpp` with CommonLibVR-MIT. Test a meaningful result and every failure path in Skyrim, then include the results in the pull request.
+6. Compile `API.hpp` with your CommonLib. Test a meaningful result and every failure path in Skyrim, then include the results in the pull request.
